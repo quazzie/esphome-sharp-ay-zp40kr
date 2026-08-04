@@ -80,6 +80,13 @@ void SharpAyZp40krClimate::dump_config() {
   ESP_LOGCONFIG(TAG, "  Packet clock: %s", this->time_ == nullptr ? "00:00 fallback" : "configured time source");
 }
 
+climate::ClimateTraits SharpAyZp40krClimate::traits() {
+  auto traits = climate_ir::ClimateIR::traits();
+  traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_COOL, climate::CLIMATE_MODE_HEAT,
+                              climate::CLIMATE_MODE_DRY});
+  return traits;
+}
+
 void SharpAyZp40krClimate::sync_shadow_from_climate_() {
   if (this->mode != climate::CLIMATE_MODE_OFF) {
     this->shadow_.power = true;

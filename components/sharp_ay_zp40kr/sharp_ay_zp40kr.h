@@ -36,6 +36,7 @@ class SharpAyZp40krClimate : public climate_ir::ClimateIR {
   void set_spot_air(size_t index);
 
  protected:
+  climate::ClimateTraits traits() override;
   void control(const climate::ClimateCall &call) override;
   void transmit_state() override;
   bool on_receive(remote_base::RemoteReceiveData data) override;
