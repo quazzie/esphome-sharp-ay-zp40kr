@@ -2,7 +2,7 @@ import esphome.codegen as cg
 from esphome.components import button, climate_ir, select, switch, time
 import esphome.config_validation as cv
 
-AUTO_LOAD = ["button", "climate_ir", "select", "switch"]
+AUTO_LOAD = ["button", "climate_ir", "select", "switch", "time"]
 
 CONF_MODEL = "model"
 CONF_TIME_ID = "time_id"
