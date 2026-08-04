@@ -1,0 +1,61 @@
+esphome:
+  name: sharp-ay-zp40kr
+  friendly_name: Sharp AY-ZP40KR
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+
+wifi:
+  ap:
+    ssid: Sharp AC Setup
+
+captive_portal:
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [sharp_ay_zp40kr]
+
+remote_transmitter:
+  id: sharp_ir_tx
+  pin: GPIO17
+  carrier_duty_percent: 50%
+  non_blocking: true
+
+remote_receiver:
+  id: sharp_ir_rx
+  pin:
+    number: GPIO18
+    inverted: true
+  dump: [raw]
+
+time:
+  - platform: homeassistant
+    id: home_time
+
+climate:
+  - platform: sharp_ay_zp40kr
+    id: sharp_ac
+    name: Sharp Air Conditioner
+    transmitter_id: sharp_ir_tx
+    receiver_id: sharp_ir_rx
+    model: crmc_a788jbez
+    time_id: home_time
+
+    ion:
+      name: Sharp ION
+    coanda:
+      name: Sharp Coanda
+    vertical_swing_toggle:
+      name: Toggle Sharp Vertical Swing
+    horizontal_swing_toggle:
+      name: Toggle Sharp Horizontal Swing
+    spot_air:
+      name: Sharp Spot Air

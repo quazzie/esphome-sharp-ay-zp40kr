@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.build-verify/
+.pio-core/
+.uv-cache/
+.esphome/
+legacy/
+codex_handoff.md

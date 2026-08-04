@@ -1,0 +1,107 @@
+{
+  "remote_model": "CRMC-A788JBEZ",
+  "unit_model": "AY-ZP40KR",
+  "captured_at": "2026-08-04",
+  "receiver_device": "irblaster-tuya-dining",
+  "packet_size_bytes": 13,
+  "notes": [
+    "Packets are real receiver captures, not generated placeholders.",
+    "Indoor unit was disconnected; accepted_by_unit is therefore null.",
+    "The remote has no Auto mode and no fixed vertical/horizontal positions.",
+    "Vertical and horizontal swing buttons send stateless toggle commands.",
+    "Additional live captures showed that ordinary Start/Stop packets carry the remote clock hour in byte 7 and minute in byte 10, both as binary integers.",
+    "The legacy experimental my_components/sharpAC firmware transmitted packets after some receiver state updates. Source review shows on_receive() itself only publishes state; transmit_state() is reached through ClimateIR control() or child-switch writes. Treat the extra transmissions as legacy/HA integration traffic, exclude them from protocol analysis, and instrument the control path before assigning an exact cause."
+  ],
+  "timing_observations": {
+    "source": "ESPHome remote_receiver raw dump during guided live capture",
+    "complete_frames_observed": 7,
+    "receiver_reported_entries_per_frame": 212,
+    "header_mark_us_observed": [3773, 3855],
+    "header_space_us_observed": [1813, 1907],
+    "data_mark_us_typical": [406, 438],
+    "zero_space_us_typical": [469, 500],
+    "one_space_us_typical": [1406, 1469],
+    "complete_protocol_frames_per_brief_press": 1,
+    "carrier_frequency_measured": false,
+    "notes": "A demodulating receiver exposes the mark/space envelope, not carrier frequency. Occasional 2-entry noise pulses and one collision with the device's own transmitter were excluded."
+  },
+  "captures": [
+    {"id":"heat_23_stop","before":"heat 23C","button":"stop","after":"off","bytes_hex":"AA 5A CF 10 06 21 21 11 08 80 23 F0 41"},
+    {"id":"heat_23_start","before":"off; heat memory 23C","button":"heat","after":"heat 23C","bytes_hex":"AA 5A CF 10 06 11 21 11 08 80 24 F0 01"},
+    {"id":"heat_18_start_after_powerful","before":"cool powerful","button":"heat","after":"heat 18C fan auto; specials off","bytes_hex":"AA 5A CF 10 01 31 21 12 08 80 00 F0 01"},
+    {"id":"cool_21_start","before":"heat 18C","button":"cool","after":"cool 21C","bytes_hex":"AA 5A CF 10 04 31 22 11 08 80 00 F0 51"},
+    {"id":"dry_start","before":"cool 21C","button":"dry","after":"dry; temperature hidden","bytes_hex":"AA 5A CF 10 00 31 23 11 08 80 00 F0 01"},
+
+    {"id":"heat_temp_18","button":"temperature","after":"heat 18C","bytes_hex":"AA 5A CF 10 01 31 21 11 08 80 04 F0 71"},
+    {"id":"heat_temp_19","button":"temperature","after":"heat 19C","bytes_hex":"AA 5A CF 10 02 31 21 11 08 80 04 F0 41"},
+    {"id":"heat_temp_20","button":"temperature","after":"heat 20C","bytes_hex":"AA 5A CF 10 03 31 21 11 08 80 04 F0 51"},
+    {"id":"heat_temp_21","button":"temperature","after":"heat 21C","bytes_hex":"AA 5A CF 10 04 31 21 11 08 80 04 F0 21"},
+    {"id":"heat_temp_22","button":"temperature","after":"heat 22C","bytes_hex":"AA 5A CF 10 05 31 21 11 08 80 04 F0 31"},
+    {"id":"heat_temp_23","button":"temperature","after":"heat 23C","bytes_hex":"AA 5A CF 10 06 31 21 11 08 80 04 F0 01"},
+    {"id":"heat_temp_24","button":"temperature","after":"heat 24C","bytes_hex":"AA 5A CF 10 07 31 21 11 08 80 04 F0 11"},
+    {"id":"heat_temp_25","button":"temperature","after":"heat 25C","bytes_hex":"AA 5A CF 10 08 31 21 11 08 80 04 F0 E1"},
+    {"id":"heat_temp_26","button":"temperature","after":"heat 26C","bytes_hex":"AA 5A CF 10 09 31 21 11 08 80 04 F0 F1"},
+    {"id":"heat_temp_27","button":"temperature","after":"heat 27C","bytes_hex":"AA 5A CF 10 0A 31 21 11 08 80 04 F0 C1"},
+    {"id":"heat_temp_28","button":"temperature","after":"heat 28C","bytes_hex":"AA 5A CF 10 0B 31 21 11 08 80 04 F0 D1"},
+    {"id":"heat_temp_29","button":"temperature","after":"heat 29C","bytes_hex":"AA 5A CF 10 0C 31 21 11 08 80 04 F0 A1"},
+    {"id":"heat_temp_30","button":"temperature","after":"heat 30C","bytes_hex":"AA 5A CF 10 0D 31 21 11 08 80 04 F0 B1"},
+    {"id":"heat_temp_31","button":"temperature","after":"heat 31C","bytes_hex":"AA 5A CF 10 0E 31 21 11 08 80 04 F0 81"},
+    {"id":"heat_temp_32","button":"temperature","after":"heat 32C","bytes_hex":"AA 5A CF 10 0F 31 21 11 08 80 04 F0 91"},
+
+    {"id":"horizontal_swing_toggle","button":"horizontal swing","display_change":"none","repeat_identical":true,"bytes_hex":"AA 5A CF 10 01 31 21 11 F8 80 07 F0 B1"},
+    {"id":"vertical_swing_toggle","button":"vertical swing","display_change":"none","repeat_identical":true,"bytes_hex":"AA 5A CF 10 01 31 21 11 0F 80 06 F0 21"},
+
+    {"id":"vacancy_on","before":"heat 18C","button":"vacancy","after":"heat 10C","bytes_hex":"AA 5A CF 10 00 31 21 11 08 80 04 F0 61"},
+    {"id":"vacancy_off","before":"heat 10C","button":"vacancy","after":"heat 18C","bytes_hex":"AA 5A CF 10 01 31 21 11 08 80 04 F0 71"},
+
+    {"id":"spot_near_left","button":"spot air","spot":"near_left","bytes_hex":"AA 5A CF 10 01 31 21 11 2C 80 09 F0 C1"},
+    {"id":"spot_near_center","button":"spot air","spot":"near_center","bytes_hex":"AA 5A CF 10 01 31 21 11 1C 80 09 F0 F1"},
+    {"id":"spot_near_right","button":"spot air","spot":"near_right","bytes_hex":"AA 5A CF 10 01 31 21 11 3C 80 09 F0 D1"},
+    {"id":"spot_far_left","button":"spot air","spot":"far_left","bytes_hex":"AA 5A CF 10 01 31 21 11 2B 80 09 F0 B1"},
+    {"id":"spot_far_center","button":"spot air","spot":"far_center","bytes_hex":"AA 5A CF 10 01 31 21 11 1B 80 09 F0 81"},
+    {"id":"spot_far_right","button":"spot air","spot":"far_right","bytes_hex":"AA 5A CF 10 01 31 21 11 3B 80 09 F0 A1"},
+    {"id":"spot_off","button":"spot air","spot":"off","bytes_hex":"AA 5A CF 10 01 31 21 11 08 80 09 F0 A1"},
+
+    {"id":"coanda_heat_on","button":"coanda","after":"heat; downward Coanda icon","bytes_hex":"AA 5A CF 10 01 31 21 11 0E 80 06 F0 31"},
+    {"id":"coanda_heat_off","button":"coanda","after":"heat; Coanda off","bytes_hex":"AA 5A CF 10 01 31 21 11 0D 80 06 F0 01"},
+    {"id":"coanda_cool_on","button":"coanda","after":"cool; roof Coanda icon","bytes_hex":"AA 5A CF 10 04 31 22 11 0E 80 06 F0 51"},
+    {"id":"coanda_cool_off","button":"coanda","after":"cool; Coanda off","bytes_hex":"AA 5A CF 10 04 31 22 11 0D 80 06 F0 61"},
+    {"id":"coanda_dry_on","button":"coanda","after":"dry; roof Coanda icon","bytes_hex":"AA 5A CF 10 00 31 23 11 0E 80 06 F0 01"},
+    {"id":"coanda_dry_off","button":"coanda","after":"dry; Coanda off","bytes_hex":"AA 5A CF 10 00 31 23 11 0D 80 06 F0 31"},
+
+    {"id":"ion_on_cool","button":"ion","after":"cool 21C; ion on","bytes_hex":"AA 5A CF 10 04 61 22 08 08 80 00 F4 C1"},
+    {"id":"ion_off_cool","button":"ion","after":"cool 21C; ion off","bytes_hex":"AA 5A CF 10 04 71 22 08 08 80 00 F0 91"},
+    {"id":"ion_only_start","before":"off","button":"ion","after":"ion only; no mode or temperature","bytes_hex":"AA 5A CF 10 01 11 34 11 08 80 33 F4 11"},
+    {"id":"ion_only_stop","before":"ion only","button":"ion","after":"off; ion remembered","bytes_hex":"AA 5A CF 10 04 21 22 11 08 80 33 F4 01"},
+    {"id":"cool_start_ion_remembered","before":"off; ion remembered","button":"cool","after":"cool 21C; ion on","bytes_hex":"AA 5A CF 10 04 11 22 11 08 80 34 F4 41"},
+
+    {"id":"powerful_on","button":"powerful","after":"cool; powerful; fan auto; temperature hidden","bytes_hex":"AA 5A CF 10 04 61 22 00 08 80 01 F0 11"},
+    {"id":"powerful_off","button":"powerful","after":"cool 21C; powerful off","bytes_hex":"AA 5A CF 10 04 71 22 00 08 80 01 F0 01"},
+    {"id":"eco_on","button":"eco","after":"cool 21C; eco on","bytes_hex":"AA 5A CF 10 04 61 22 00 08 80 20 F0 21"},
+    {"id":"eco_off","button":"eco","after":"cool 21C; eco off","bytes_hex":"AA 5A CF 10 04 71 22 00 08 80 20 F0 31"},
+
+    {"id":"fan_level_1","button":"fan","fan":"1","bytes_hex":"AA 5A CF 10 04 31 32 12 2C 80 05 F0 41"},
+    {"id":"fan_level_2","button":"fan","fan":"2","bytes_hex":"AA 5A CF 10 04 31 52 12 2C 80 05 F0 21"},
+    {"id":"fan_level_3","button":"fan","fan":"3","bytes_hex":"AA 5A CF 10 04 31 72 12 2C 80 05 F0 01"},
+    {"id":"fan_auto","button":"fan","fan":"auto","bytes_hex":"AA 5A CF 10 04 31 22 12 2C 80 05 F0 51"},
+
+    {"id":"cool_reselect_preserves_spot","button":"cool","after":"cool 21C; spot near left preserved","bytes_hex":"AA 5A CF 10 04 11 22 11 2C 80 3B F0 91"},
+
+    {"id":"heat_18_stop_clock_18_26","before":"heat 18C; clock 18:26","button":"stop","after":"off","bytes_hex":"AA 5A CF 10 01 21 21 12 08 80 1A F0 A1"},
+    {"id":"heat_18_start_clock_18_27","before":"off; heat memory 18C; clock 18:27","button":"heat","after":"heat 18C","bytes_hex":"AA 5A CF 10 01 11 21 12 08 80 1B F0 81"},
+    {"id":"coanda_heat_on_clock_hour_18","before":"heat 18C","button":"coanda","after":"heat; downward/floor Coanda icon","bytes_hex":"AA 5A CF 10 01 31 21 12 0E 80 06 F0 01"},
+    {"id":"heat_temp_19_coanda_display_preserved","before":"heat 18C; downward/floor Coanda icon","button":"temperature","after":"heat 19C; Coanda icon still active","bytes_hex":"AA 5A CF 10 02 31 21 12 08 80 04 F0 71"}
+  ],
+  "observed_rules": [
+    "Spot Air and Coanda cancel each other in both directions.",
+    "Powerful and ECO cancel each other in both directions.",
+    "Powerful forces fan Auto, hides temperature, and cancels Spot Air.",
+    "Temperature and Fan buttons emit no IR packet while Powerful is active.",
+    "Changing operating mode exits Powerful.",
+    "ION persists through Stop and reappears on the next operating-mode start.",
+    "Dry displays no temperature.",
+    "Heat, Cool, and Dry remember independent mode state/setpoints.",
+    "Ordinary Start/Stop packets encode current clock hour in byte 7 and current minute in byte 10 as binary integers; feature commands may overwrite one or both fields with command payloads.",
+    "Coanda remains active on the remote display after a temperature change, but the temperature packet uses neutral airflow byte 08; Coanda must therefore be preserved in decoder shadow state rather than inferred from every packet."
+  ]
+}
