@@ -17,6 +17,7 @@ A907-family state protocol without a runtime dependency on IRremoteESP8266.
 - Stateless vertical and horizontal swing buttons
 - All six Spot Air targets plus Off
 - Optional receiver synchronization from the physical remote
+- Optional current-temperature reporting from any ESPHome sensor
 
 Auto mode, Fan-only mode, fixed louvre positions, and timer functions are not
 exposed because they are not controls on the A788 remote.
@@ -38,6 +39,7 @@ climate:
     transmitter_id: sharp_ir_tx
     receiver_id: sharp_ir_rx
     time_id: home_time
+    sensor: room_temperature
     ion:
       name: Sharp ION
     coanda:
@@ -49,6 +51,21 @@ climate:
     spot_air:
       name: Sharp Spot Air
 ```
+
+`sensor` is optional and uses ESPHome's standard `climate_ir` sensor option. It
+must reference the `id` of a sensor defined elsewhere in the same device
+configuration. For example, a Home Assistant temperature entity can be imported
+with:
+
+```yaml
+sensor:
+  - platform: homeassistant
+    id: room_temperature
+    entity_id: sensor.living_room_temperature
+```
+
+The referenced sensor is published as the climate entity's current temperature;
+it does not affect the IR target-temperature encoding.
 
 `time_id` is optional. When it is omitted or not synchronized, ordinary packets
 use the deliberate fallback clock value `00:00`. The physical remote serializes
