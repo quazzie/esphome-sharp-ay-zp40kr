@@ -75,7 +75,7 @@ CONFIG_SCHEMA = climate_ir.climate_ir_with_receiver_schema(
         cv.Optional(CONF_POWER_SENSOR): cv.use_id(sensor.Sensor),
         cv.Optional(
             CONF_ACTIVE_THRESHOLD, default=50.0
-        ): cv.positive_float(unit=cv.unit_of_measurement("W")),
+        ): cv.positive_float,
     }
 )
 
