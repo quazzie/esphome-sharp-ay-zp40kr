@@ -71,6 +71,51 @@ void SharpAyZp40krClimate::setup() {
   this->restore_shadow_();
   this->sync_shadow_from_climate_();
   this->publish_from_shadow_();
+  if (this->power_sensor_ != nullptr) {
+    this->power_sensor_->add_on_state_callback([this](float state) {
+      this->last_power_w_ = state;
+      this->update_action_(state);
+    });
+    if (this->power_sensor_->has_state()) {
+      this->last_power_w_ = this->power_sensor_->state;
+      this->update_action_(this->last_power_w_);
+    }
+  }
+}
+
+void SharpAyZp40krClimate::update_action_(float power_w) {
+  // The A788 sends no status packets, so the compressor state is inferred from
+  // an external power measurement (e.g. the plug the AC is wired through):
+  // above the active threshold the unit is compressing in its current mode,
+  // below it the indoor fan is running idle (or the unit is off).
+  climate::ClimateDeviceAction action;
+  if (this->mode == climate::CLIMATE_MODE_OFF) {
+    action = climate::CLIMATE_DEVICE_ACTION_OFF;
+  } else if (power_w > this->active_threshold_) {
+    switch (this->mode) {
+      case climate::CLIMATE_MODE_HEAT:
+        action = climate::CLIMATE_DEVICE_ACTION_HEATING;
+        break;
+      case climate::CLIMATE_MODE_COOL:
+        action = climate::CLIMATE_DEVICE_ACTION_COOLING;
+        break;
+      case climate::CLIMATE_MODE_DRY:
+        action = climate::CLIMATE_DEVICE_ACTION_DRYING;
+        break;
+      default:
+        action = climate::CLIMATE_DEVICE_ACTION_FAN;
+        break;
+    }
+  } else {
+    action = climate::CLIMATE_DEVICE_ACTION_IDLE;
+  }
+  if (action != this->current_action_) {
+    ESP_LOGD(TAG, "Action %s -> %s (power %.1f W, threshold %.1f W)",
+             climate::climate_device_action_str(this->current_action_),
+             climate::climate_device_action_str(action), power_w, this->active_threshold_);
+    this->set_current_action(action);
+    this->publish_state();
+  }
 }
 
 void SharpAyZp40krClimate::dump_config() {
@@ -383,6 +428,8 @@ void SharpAyZp40krClimate::publish_from_shadow_() {
     this->preset = climate::CLIMATE_PRESET_AWAY;
   else
     this->preset = climate::CLIMATE_PRESET_NONE;
+  if (this->power_sensor_ != nullptr)
+    this->update_action_(this->last_power_w_);
   this->publish_state();
   this->publish_children_();
 }

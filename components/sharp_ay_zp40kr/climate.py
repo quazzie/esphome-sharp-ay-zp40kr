@@ -1,8 +1,8 @@
 import esphome.codegen as cg
-from esphome.components import button, climate_ir, select, switch, time
+from esphome.components import button, climate_ir, select, sensor, switch, time
 import esphome.config_validation as cv
 
-AUTO_LOAD = ["button", "climate_ir", "select", "switch", "time"]
+AUTO_LOAD = ["button", "climate_ir", "select", "sensor", "switch", "time"]
 
 CONF_MODEL = "model"
 CONF_TIME_ID = "time_id"
@@ -12,6 +12,8 @@ CONF_COANDA = "coanda"
 CONF_VERTICAL_SWING_TOGGLE = "vertical_swing_toggle"
 CONF_HORIZONTAL_SWING_TOGGLE = "horizontal_swing_toggle"
 CONF_SPOT_AIR = "spot_air"
+CONF_POWER_SENSOR = "power_sensor"
+CONF_ACTIVE_THRESHOLD = "active_threshold"
 
 SPOT_AIR_OPTIONS = [
     "Off",
@@ -70,6 +72,10 @@ CONFIG_SCHEMA = climate_ir.climate_ir_with_receiver_schema(
         cv.Optional(CONF_SPOT_AIR): select.select_schema(
             SharpSpotAirSelect, icon="mdi:target"
         ),
+        cv.Optional(CONF_POWER_SENSOR): cv.use_id(sensor.Sensor),
+        cv.Optional(
+            CONF_ACTIVE_THRESHOLD, default=50.0
+        ): cv.positive_float(unit=cv.unit_of_measurement("W")),
     }
 )
 
@@ -108,3 +114,9 @@ async def to_code(config):
         entity = await select.new_select(spot_config, options=SPOT_AIR_OPTIONS)
         cg.add(entity.set_parent(var))
         cg.add(var.set_spot_air_select(entity))
+
+    if power_sensor := config.get(CONF_POWER_SENSOR):
+        sens = await cg.get_variable(power_sensor)
+        cg.add(
+            var.set_power_sensor(sens, config[CONF_ACTIVE_THRESHOLD])
+        )

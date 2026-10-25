@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "esphome/components/climate_ir/climate_ir.h"
+#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/time/real_time_clock.h"
 #include "esphome/core/preferences.h"
 #include "sharp_entities.h"
@@ -28,6 +29,10 @@ class SharpAyZp40krClimate : public climate_ir::ClimateIR {
   void set_ion_switch(SharpIonSwitch *entity) { this->ion_switch_ = entity; }
   void set_coanda_switch(SharpCoandaSwitch *entity) { this->coanda_switch_ = entity; }
   void set_spot_air_select(SharpSpotAirSelect *entity) { this->spot_air_select_ = entity; }
+  void set_power_sensor(sensor::Sensor *power_sensor, float active_threshold_w) {
+    this->power_sensor_ = power_sensor;
+    this->active_threshold_ = active_threshold_w;
+  }
 
   void set_ion(bool enabled);
   void set_coanda(bool enabled);
@@ -50,6 +55,7 @@ class SharpAyZp40krClimate : public climate_ir::ClimateIR {
   void restore_shadow_();
   void save_shadow_();
   void log_packet_(const char *direction, const SharpA788Packet &packet) const;
+  void update_action_(float power_w);
 
   struct RestoreData {
     uint8_t marker{0xA8};
@@ -70,6 +76,9 @@ class SharpAyZp40krClimate : public climate_ir::ClimateIR {
   SharpIonSwitch *ion_switch_{nullptr};
   SharpCoandaSwitch *coanda_switch_{nullptr};
   SharpSpotAirSelect *spot_air_select_{nullptr};
+  sensor::Sensor *power_sensor_{nullptr};
+  float active_threshold_{50.0f};
+  float last_power_w_{0.0f};
 
   uint32_t last_transmit_ms_{0};
   uint32_t receive_suppression_ms_{250};
