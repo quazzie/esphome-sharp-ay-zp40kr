@@ -129,6 +129,9 @@ climate::ClimateTraits SharpAyZp40krClimate::traits() {
   auto traits = climate_ir::ClimateIR::traits();
   traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_COOL, climate::CLIMATE_MODE_HEAT,
                               climate::CLIMATE_MODE_DRY});
+  // Expose hvac_action in HA (off / idle / heating / cooling, inferred from the
+  // power sensor when configured; the A788 itself sends no status packets)
+  traits.add_feature_flags(climate::CLIMATE_SUPPORTS_ACTION);
   return traits;
 }
 
