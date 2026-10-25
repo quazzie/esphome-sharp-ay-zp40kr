@@ -88,32 +88,32 @@ void SharpAyZp40krClimate::update_action_(float power_w) {
   // an external power measurement (e.g. the plug the AC is wired through):
   // above the active threshold the unit is compressing in its current mode,
   // below it the indoor fan is running idle (or the unit is off).
-  climate::ClimateDeviceAction action;
+  climate::ClimateAction action;
   if (this->mode == climate::CLIMATE_MODE_OFF) {
-    action = climate::CLIMATE_DEVICE_ACTION_OFF;
+    action = climate::CLIMATE_ACTION_OFF;
   } else if (power_w > this->active_threshold_) {
     switch (this->mode) {
       case climate::CLIMATE_MODE_HEAT:
-        action = climate::CLIMATE_DEVICE_ACTION_HEATING;
+        action = climate::CLIMATE_ACTION_HEATING;
         break;
       case climate::CLIMATE_MODE_COOL:
-        action = climate::CLIMATE_DEVICE_ACTION_COOLING;
+        action = climate::CLIMATE_ACTION_COOLING;
         break;
       case climate::CLIMATE_MODE_DRY:
-        action = climate::CLIMATE_DEVICE_ACTION_DRYING;
+        action = climate::CLIMATE_ACTION_DRYING;
         break;
       default:
-        action = climate::CLIMATE_DEVICE_ACTION_FAN;
+        action = climate::CLIMATE_ACTION_FAN;
         break;
     }
   } else {
-    action = climate::CLIMATE_DEVICE_ACTION_IDLE;
+    action = climate::CLIMATE_ACTION_IDLE;
   }
-  if (action != this->current_action_) {
+  if (action != this->action) {
     ESP_LOGD(TAG, "Action %s -> %s (power %.1f W, threshold %.1f W)",
-             climate::climate_device_action_str(this->current_action_),
-             climate::climate_device_action_str(action), power_w, this->active_threshold_);
-    this->set_current_action(action);
+             LOG_STR_ARG(climate::climate_action_to_string(this->action)),
+             LOG_STR_ARG(climate::climate_action_to_string(action)), power_w, this->active_threshold_);
+    this->action = action;
     this->publish_state();
   }
 }
